@@ -1,0 +1,1 @@
+A = magic(2);sigmoid(A)
