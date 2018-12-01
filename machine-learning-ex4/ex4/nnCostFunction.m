@@ -87,16 +87,15 @@ d3 = a3 - Y_Matrix;
 % 3. Caclulate Delta of hidden layer
 % Note: Excluding the first column of Theta2 via Theta2(:,2:end)' is because the hidden layer bias unit has no connection to the input layer - so we do not use backpropagation for it. See Figure 3 in ex4.pdf for a diagram showing this.
 d2 = (d3 * Theta2(:,2:end)) .* sigmoidGradient(z2);
-% Note that you should skip or remove 0 index of delta2.
-% Note: Excluding the first column of Theta2 is because the hidden layer bias unit has no connection to the input layer - so we do not use backpropagation for it
 
-DELTA1 = a1' * d2;
-DELTA2 = a2' * d3;
+% Remember: Matrix multiplication is not commutative. --> the order in which two matrices are multiplied matters!
+DELTA1 = d2' * a1;
+DELTA2 = d3' * a2;
 
 Theta1_grad = 1/m * DELTA1;
 Theta2_grad = 1/m * DELTA2;
 
-% PARRT 3
+% PART 3
 
 % Note we should not regularize the terms that correspond to the bias. 
 % For the matrices Theta1 and Theta2, this corresponds to the first column of each matrix.
