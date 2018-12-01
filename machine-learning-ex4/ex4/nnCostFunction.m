@@ -73,36 +73,28 @@ z3 = a2*Theta2';
 a3 = sigmoid(z3);
 H = a3;
 
-% Recall that for linear and logistic regression, 'y' and 'h' were both vectors, so we could compute the sum of their products easily using vector multiplication. After transposing one of the vectors, we get a result of size (1 x m) * (m x 1). That's a scalar value. So that worked fine, as long as 'y' and 'h' are vectors.
+% Recall that for linear and logistic regression, 'y' and 'h' were both vectors, so we could compute the sum of their products easily using vector multiplication. 
+% After transposing one of the vectors, we get a result of size (1 x m) * (m x 1). That's a scalar value. So that worked fine, as long as 'y' and 'h' are vectors.
 % But the when 'h' and 'y' are matrices, the same trick does not work as easily. --> use element wise multiplication instead.
 J = 1/m * sum(sum(  -Y_Matrix .* log(H) - (1-Y_Matrix) .* log(1-H) ));
 
-
 % PART 2
-for t = 1:m % t is one row in X --> max number of rows
+% Forward propagation ab
+% 2. Calculate Delta of last layer
+% δ3 or d3 is the difference between a3 and the y_matrix. The dimensions are the same as both, (m x r).
+d3 = a3 - Y_Matrix;
 
-    % 1. Forward propagation
-    a1 = [1; X(t,:)'];
-    z2 = Theta1 * a1;
-    a2 = [1; sigmoid(z2)]; % adds bias --> ones(size(z2, 1), 1)
-    z3 = Theta2 * a2;
-    a3 = sigmoid(z3);
+% 3. Caclulate Delta of hidden layer
+% Note: Excluding the first column of Theta2 via Theta2(:,2:end)' is because the hidden layer bias unit has no connection to the input layer - so we do not use backpropagation for it. See Figure 3 in ex4.pdf for a diagram showing this.
+d2 = (d3 * Theta2(:,2:end)) .* sigmoidGradient(z2);
+% Note that you should skip or remove 0 index of delta2.
+% Note: Excluding the first column of Theta2 is because the hidden layer bias unit has no connection to the input layer - so we do not use backpropagation for it
 
-    % 2. Calculate Delta of last layer
-    % δ3 or d3 is the difference between a3 and the y_matrix. The dimensions are the same as both, (m x r).
-    d3 = a3 - Y_Matrix(:, t); % see above for Y_Matrix, Get column from Matrix for specific training example t
-    
-    % 3. Caclulate Delta of hidden layer
-    d2 = (Theta2' * d3) .* sigmoidGradient(z2);
+DELTA1 = a1' * d2;
+DELTA2 = a2' * d3;
 
-    % Note that you should skip or remove 0 index of delta2.
-    % Note: Excluding the first column of Theta2 is because the hidden layer bias unit has no connection to the input layer - so we do not use backpropagation for it
-    % See Figure 3 in ex4.pdf for a diagram showing this.
-    delta_2 = delta_2(2:end); % skipping sigma2(0)
-
-	Theta2_grad = Theta2_grad + delta_3 * a2'; 
-	Theta1_grad = Theta1_grad + delta_2 * a1'; 
-end
+Theta1_grad = 1/m * DELTA1;
+Theta2_grad = 1/m * DELTA2;
 
 % PARRT 3
 
