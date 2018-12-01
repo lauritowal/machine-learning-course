@@ -96,6 +96,7 @@ Theta1_grad = 1/m * DELTA1;
 Theta2_grad = 1/m * DELTA2;
 
 % PART 3
+% Regularized cost function
 
 % Note we should not regularize the terms that correspond to the bias. 
 % For the matrices Theta1 and Theta2, this corresponds to the first column of each matrix.
@@ -105,6 +106,12 @@ t2 = Theta2(:,2:size(Theta2,2));
 Reg = (lambda / (2*m))  * (sum( sum ( t1.^ 2 )) + sum( sum ( t2.^ 2 )));
 % Regularized cost function
 J = J + Reg;
+
+% Regularized Gradient
+Theta1(:, 1) = 0;
+Theta2(:, 1) = 0;
+Theta1_grad = Theta1_grad + (lambda / m) * Theta1;
+Theta2_grad = Theta2_grad + (lambda / m) * Theta2;
 
 
 
